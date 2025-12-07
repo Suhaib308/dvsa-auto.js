@@ -27,3 +27,9 @@
 
             clearInterval(window.dvsaClicker);
             clearInterval(window.dvsaChecker);
+        }
+    }
+
+    window.dvsaClicker = setInterval(clickSearchButton, CLICK_INTERVAL);
+    window.dvsaChecker = setInterval(checkForSlot, CHECK_INTERVAL);
+})();
