@@ -1,35 +1,35 @@
-(function(){
-    if (window.DVSA_AUTO_RUNNING) return;
-    window.DVSA_AUTO_RUNNING = true;
+(function() {
+    // Click "Search tests" every 10s
+    const scanInterval = 10000;
+    const messageSelector = "li";
 
-    console.log("DVSA Auto-Checker Running…");
+    function playAlert() {
+        const audio = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
+        audio.loop = true;
+        audio.play().catch(()=>{});
+        alert("Slot available!");
+    }
 
-    const CLICK_INTERVAL = 10000;
-    const CHECK_INTERVAL = 600;
+    function checkSlot() {
+        const msg = document.querySelector(messageSelector);
+        if (!msg || !msg.textContent.includes("There are no short notice tests available")) {
+            console.log("🎉 Slot available!");
+            playAlert();
+        } else {
+            console.log("No slots yet. Retrying...");
+            setTimeout(clickSearch, scanInterval);
+        }
+    }
 
-    function clickSearchButton() {
-        const btn = document.querySelector('#test-centres-submit');
+    function clickSearch() {
+        const btn = document.querySelector("#test-centres-submit");
         if (btn) {
-            console.log("Clicking Search Tests…");
             btn.click();
+            setTimeout(checkSlot, 1000); // wait 1s for reload/message
+        } else {
+            console.log("Search button not found.");
         }
     }
 
-    function checkForSlot() {
-        const msg = document.querySelector("li");
-        if (!msg) {
-            console.log("SLOT FOUND!");
-            alert("🚨 SLOT FOUND — GO NOW!");
-
-            const audio = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
-            audio.loop = true;
-            audio.play().catch(()=>{});
-
-            clearInterval(window.dvsaClicker);
-            clearInterval(window.dvsaChecker);
-        }
-    }
-
-    window.dvsaClicker = setInterval(clickSearchButton, CLICK_INTERVAL);
-    window.dvsaChecker = setInterval(checkForSlot, CHECK_INTERVAL);
+    clickSearch();
 })();
